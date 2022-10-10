@@ -4,11 +4,16 @@ import Form from "./components/input";
 import AllProducts from "./components/allProducts";
 import { search } from "fast-fuzzy";
 import { ItemButton } from "./components/eachProduct";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 function App() {
   const [allData, setallData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [savedItems, setSavedItems] = useState([]);
+  const [localStorageData, setLocalStorageData] = useLocalStorage(
+    "Saved data",
+    []
+  );
 
   useEffect(() => {
     async function fetchData() {
@@ -31,11 +36,24 @@ function App() {
   function addToSavedItems(item) {
     setSavedItems([...savedItems, item]);
     console.log(savedItems);
+    setFilteredData(
+      filteredData.filter(
+        (savedItem) => savedItem._id !== item._id
+      ) /*nachdem wir diese in savedItems gespeichert haben müssen wir sie as filteredData löshen */
+    );
+    setLocalStorageData([...savedItems, item]);
+    console.log(localStorageData);
   }
   function deleteItems(oneItem) {
     setSavedItems(
       savedItems.filter((savedItem) => savedItem._id !== oneItem._id)
     ); /* "oneItem" ist das gleiche was "savedItem" */
+    setFilteredData(
+      [
+        oneItem,
+        ...filteredData,
+      ] /*nachdem wir diese aus savedItems gelöscht haben müssen wir sie wieder zurück ins filteredData bringen */
+    );
   }
 
   return (
@@ -50,6 +68,11 @@ function App() {
       </ul>
 
       <Form filteredList={filteredList}></Form>
+      <h3>Recently saved:</h3>
+      {localStorageData.map((item) => (
+        <ItemButton>{item.name.de}</ItemButton>
+      ))}
+      <h3>Filtered List:</h3>
       <AllProducts
         filteredData={filteredData}
         addToSavedItems={addToSavedItems}
