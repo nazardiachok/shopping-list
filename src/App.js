@@ -41,8 +41,7 @@ function App() {
         (savedItem) => savedItem._id !== item._id
       ) /*nachdem wir diese in savedItems gespeichert haben müssen wir sie as filteredData löshen */
     );
-    setLocalStorageData([...savedItems, item]);
-    console.log(localStorageData);
+    /*  setLocalStorageData([...savedItems, item]); das alte */
   }
   function deleteItems(oneItem) {
     setSavedItems(
@@ -54,11 +53,20 @@ function App() {
         ...filteredData,
       ] /*nachdem wir diese aus savedItems gelöscht haben müssen wir sie wieder zurück ins filteredData bringen */
     );
+    setLocalStorageData([
+      ...localStorageData,
+      oneItem,
+      /* ${oneItem.id === (localStorageData.map(item => item.id) ? "" : oneItem} */
+    ]); /* beim löshen fügen wir diese gleichzeitig zum recently saved */
   }
 
   return (
     <div className="App">
-      <h3>Find what you like</h3>
+      <h3>Find what you like!</h3>
+
+      <Form filteredList={filteredList}></Form>
+
+      <h3>Saved to buy:</h3>
       <ul>
         {savedItems.map((oneItem) => (
           <ItemButton onClick={() => deleteItems(oneItem)} key={oneItem._id}>
@@ -67,11 +75,11 @@ function App() {
         ))}
       </ul>
 
-      <Form filteredList={filteredList}></Form>
       <h3>Recently saved:</h3>
       {localStorageData.map((item) => (
         <ItemButton>{item.name.de}</ItemButton>
       ))}
+
       <h3>Filtered List:</h3>
       <AllProducts
         filteredData={filteredData}
