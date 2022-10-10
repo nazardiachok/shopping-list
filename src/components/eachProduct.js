@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-export default function Product({ item, addToSavedItems }) {
+export default function Product({ item, addToSavedItems, language }) {
   return (
     <ul style={{ listStyle: "none" }}>
       <ItemButton onClick={() => addToSavedItems(item)}>
-        {item.name.de}
+        {/* {item.name.de} */}
+        {language === "de" ? item.name.de : item.name.en}
       </ItemButton>
     </ul>
   );
